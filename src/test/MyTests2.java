@@ -26,7 +26,7 @@ public class MyTests2 {
 	}
 	
 	@Test
-	public final void whenJsonIsOutput() {
+	public final void whenJsonIsOutput() throws IOException {
 		HTTPRequesting.createJson();
 	}
 }
