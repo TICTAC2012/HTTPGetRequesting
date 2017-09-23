@@ -1,11 +1,15 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 public class HTTPRequesting {
 	
@@ -13,7 +17,7 @@ public class HTTPRequesting {
 	public static void catchInput() {
 		Scanner scanner = new Scanner(System.in);
 		if(scanner.hasNextLine()) {
-			String stringUrl = scanner.nextLine();
+			scanner.nextLine();
 		}
 		scanner.close();
 	}
@@ -58,7 +62,7 @@ public class HTTPRequesting {
 	}
 
 	//Takes in a list of potential URLs and attempts to connect to them.
-	public static void makeGetRequest() throws IOException, MalformedURLException {
+	public static void makeGetRequest() throws IOException {
 		try {
 			Scanner scanner = new Scanner(System.in);
 			ArrayList<String> urlAddresses = new ArrayList<String>();
@@ -72,37 +76,41 @@ public class HTTPRequesting {
 				}
 			}
 			scanner.close();
-			
-			//For each URL string, we perform the same connection process.
-			for(String urls : urlAddresses) {
-				try{
-				HttpURLConnection connection;
-				URL webAddress = new URL(urls);
-				connection = (HttpURLConnection) webAddress.openConnection();
-				connection.setRequestMethod("GET");
-				connection.connect();
-				System.out.println(connection.getURL());
-				System.out.println(connection.getResponseCode());
-				System.out.println(connection.getContentLength());
-				System.out.println(connection.getDate());
-				}
-				//We don't want to halt the whole program because a URL is invalid.
-				catch(MalformedURLException e) {
-					System.out.println("An invalid URL is contained within the list.");
-					//Will hand control back into the loop
-					continue;
-				}
-			}
-			
+			makeConnection(urlAddresses);
 		}
 		catch(RuntimeException e) {
 			System.err.println("An error occurred");
 		}
-		catch(IOException e) {
-			System.err.println("Could not open connection to webpage");
+	}
+	
+	//Helper for the makeGetRequest method
+	public static void makeConnection(ArrayList<String> urlAddresses) throws IOException {
+		//For each URL string, we perform the same connection process.
+		for(String urls : urlAddresses) {
+			try{
+			HttpURLConnection connection;
+			URL webAddress = new URL(urls);
+			connection = (HttpURLConnection) webAddress.openConnection();
+			connection.setRequestMethod("GET");
+			connection.connect();
+			
+			//Code needed to convert UNIX timestamp into a readable date format.
+			Date requestDate = new Date(connection.getDate());
+			DateFormat dateFormatter = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss z");
+			
+			//Output of HTTP response information
+			System.out.println(connection.getURL());
+			System.out.println(connection.getResponseCode());
+			System.out.println(connection.getContentLength());
+			System.out.println(dateFormatter.format(requestDate));
+			}
+			//We don't want to halt the whole program because a URL is invalid.
+			catch(MalformedURLException e) {
+				System.out.println("An invalid URL is contained within the list.");
+				//Will hand control back into the loop
+				continue;
+			}
 		}
-		
-		
 	}
 	
 	

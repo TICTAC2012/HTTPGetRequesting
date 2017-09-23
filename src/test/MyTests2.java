@@ -1,8 +1,6 @@
 package test;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-
 import org.junit.Test;
 
 import main.HTTPRequesting;
@@ -21,8 +19,9 @@ public class MyTests2 {
 		HTTPRequesting.makeGetRequest();
 	}
 	
-	@Test(expected = MalformedURLException.class)
-	public final void whenFailedRequestsAreMade() throws IOException, MalformedURLException {
+	//Not necessary for right now? For use with proper command line arguments instead?
+	@Test(expected = IOException.class)
+	public final void whenFailedRequestsAreMade() throws IOException {
 		HTTPRequesting.makeGetRequest();
 	}
 }
