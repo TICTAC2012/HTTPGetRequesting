@@ -33,6 +33,7 @@ public class HTTPRequesting {
 		}
 	}
 
+	//Gives multiple lines of input to the program and adds them to an ArrayList
 	public static void getListOfAddresses() {
 		try {
 			Scanner scanner = new Scanner(System.in);
@@ -56,6 +57,7 @@ public class HTTPRequesting {
 		}
 	}
 
+	//Takes in a list of potential URLs and attempts to connect to them.
 	public static void makeGetRequest() throws IOException, MalformedURLException {
 		try {
 			Scanner scanner = new Scanner(System.in);
@@ -71,20 +73,30 @@ public class HTTPRequesting {
 			}
 			scanner.close();
 			
+			//For each URL string, we perform the same connection process.
 			for(String urls : urlAddresses) {
+				try{
 				HttpURLConnection connection;
 				URL webAddress = new URL(urls);
 				connection = (HttpURLConnection) webAddress.openConnection();
 				connection.setRequestMethod("GET");
 				connection.connect();
+				System.out.println(connection.getURL());
+				System.out.println(connection.getResponseCode());
+				System.out.println(connection.getContentLength());
+				System.out.println(connection.getDate());
+				}
+				//We don't want to halt the whole program because a URL is invalid.
+				catch(MalformedURLException e) {
+					System.out.println("An invalid URL is contained within the list.");
+					//Will hand control back into the loop
+					continue;
+				}
 			}
 			
 		}
 		catch(RuntimeException e) {
 			System.err.println("An error occurred");
-		}
-		catch(MalformedURLException e) {
-			System.err.println("An invalid URL is contained within the list");
 		}
 		catch(IOException e) {
 			System.err.println("Could not open connection to webpage");
