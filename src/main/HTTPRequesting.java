@@ -4,7 +4,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -84,7 +92,7 @@ public class HTTPRequesting {
 	}
 	
 	//Helper for the makeGetRequest method
-	public static void makeConnection(ArrayList<String> urlAddresses) throws IOException {
+	private static void makeConnection(ArrayList<String> urlAddresses) throws IOException {
 		//For each URL string, we perform the same connection process.
 		for(String urls : urlAddresses) {
 			try{
@@ -112,7 +120,63 @@ public class HTTPRequesting {
 			}
 		}
 	}
-	
-	
 
+	public static void createJson() throws IOException {
+		try {
+		Scanner scanner = new Scanner(System.in);
+		ArrayList<String> urlAddresses = new ArrayList<String>();
+		String stringUrl = "";
+		while(scanner.hasNextLine()) {
+			stringUrl = scanner.nextLine();
+			if(stringUrl.equals("")) {
+				break;
+			}else {
+				urlAddresses.add(stringUrl);
+			}
+		}
+		scanner.close();
+		generateJson(urlAddresses);
+		}
+		catch(RuntimeException e) {
+			System.err.println("An error occurred");
+		}
+	}
+
+	//Helper for the createJson method above
+	public static void generateJson(ArrayList<String> urlAddresses) throws IOException {
+		//For each URL string, we perform the same connection process.
+		for(String urls : urlAddresses) {
+			try{
+			HttpURLConnection connection;
+			URL webAddress = new URL(urls);
+			connection = (HttpURLConnection) webAddress.openConnection();
+			connection.setRequestMethod("GET");
+			connection.connect();
+			
+			//Code needed to convert UNIX timestamp into a readable date format.
+			Date requestDate = new Date(connection.getDate());
+			DateFormat dateFormatter = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss z");
+			
+			
+			//Output of HTTP response information in JSON
+			HTTPResponse response = new HTTPResponse(connection.getURL(),connection.getResponseCode(),connection.getContentLength(),dateFormatter.format(requestDate));
+			
+			GsonBuilder gsonBuilder = new GsonBuilder();
+			Gson obj = gsonBuilder.create();
+			//FileWriter jsonWriter = new FileWriter("HTTPRequests.json");
+			PrintWriter jsonWriter = new PrintWriter(new FileOutputStream(new File("HTTPRequests.json"),true));
+			jsonWriter.write(obj.toJson(response));
+			jsonWriter.close();
+			
+			}
+			//We don't want to halt the whole program because a URL is invalid.
+			catch(MalformedURLException e) {
+				
+				System.out.println("An invalid URL is contained within the list.");
+				//Will hand control back into the loop
+				continue;
+			}
+		}
+		
+	}
 }

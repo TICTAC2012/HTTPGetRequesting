@@ -24,4 +24,9 @@ public class MyTests2 {
 	public final void whenFailedRequestsAreMade() throws IOException {
 		HTTPRequesting.makeGetRequest();
 	}
+	
+	@Test
+	public final void whenJsonIsOutput() {
+		HTTPRequesting.createJson();
+	}
 }
