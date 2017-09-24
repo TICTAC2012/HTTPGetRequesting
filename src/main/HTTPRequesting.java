@@ -9,10 +9,8 @@ import com.google.gson.GsonBuilder;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,17 +30,12 @@ public class HTTPRequesting {
 	
 	//Gives input to program and output what was entered.
 	public static void writeOutput() {
-		try {
-			Scanner scanner = new Scanner(System.in);
-			if(scanner.hasNextLine()) {
-				String stringUrl = scanner.nextLine();
-				System.out.println(stringUrl);
-			}
-			scanner.close();
+		Scanner scanner = new Scanner(System.in);
+		if(scanner.hasNextLine()) {
+			String stringUrl = scanner.nextLine();
+			System.out.println(stringUrl);
 		}
-		catch(RuntimeException e) {
-			System.err.println("Output could not be written to command line");
-		}
+		scanner.close();
 	}
 
 	//Gives multiple lines of input to the program and adds them to an ArrayList
@@ -120,6 +113,45 @@ public class HTTPRequesting {
 			}
 		}
 	}
+	
+	public static void waitForTimeout() throws IOException {
+		try {
+			Scanner scanner = new Scanner(System.in);
+			ArrayList<String> urlAddresses = new ArrayList<String>();
+			String stringUrl = "";
+			while(scanner.hasNextLine()) {
+				stringUrl = scanner.nextLine();
+				if(stringUrl.equals("")) {
+					break;
+				}else {
+					urlAddresses.add(stringUrl);
+				}
+			}
+			scanner.close();
+			
+			//For each URL string, we perform the same connection process.
+			for(String urls : urlAddresses) {
+				try{
+				HttpURLConnection connection;
+				URL webAddress = new URL(urls);
+				connection = (HttpURLConnection) webAddress.openConnection();
+				connection.setRequestMethod("GET");
+				
+				//Force a timeout to occur
+				connection.setConnectTimeout(1);
+				connection.connect();
+				}
+				catch(MalformedURLException e) {
+					//Will hand control back into the loop
+					continue;
+				}
+			}
+		}
+		catch(RuntimeException e) {
+			System.err.println("An error occurred");
+		}
+		
+	}
 
 	public static void createJson() throws IOException {
 		try {
@@ -145,6 +177,11 @@ public class HTTPRequesting {
 	//Helper for the createJson method above
 	public static void generateJson(ArrayList<String> urlAddresses) throws IOException {
 		//For each URL string, we perform the same connection process.
+		ArrayList<String> jsonStrings = new ArrayList<String>();
+		GsonBuilder gsonBuilder = new GsonBuilder();
+		Gson obj = gsonBuilder.create();
+		PrintWriter jsonWriter = new PrintWriter(new FileOutputStream(new File("HTTPRequests.json"),false));
+		
 		for(String urls : urlAddresses) {
 			try{
 			HttpURLConnection connection;
@@ -159,24 +196,26 @@ public class HTTPRequesting {
 			
 			
 			//Output of HTTP response information in JSON
-			HTTPResponse response = new HTTPResponse(connection.getURL(),connection.getResponseCode(),connection.getContentLength(),dateFormatter.format(requestDate));
+			HTTPResponse response = new HTTPResponse(connection.getURL().toString(),connection.getResponseCode(),connection.getContentLength(),dateFormatter.format(requestDate));
 			
-			GsonBuilder gsonBuilder = new GsonBuilder();
-			Gson obj = gsonBuilder.create();
-			//FileWriter jsonWriter = new FileWriter("HTTPRequests.json");
-			PrintWriter jsonWriter = new PrintWriter(new FileOutputStream(new File("HTTPRequests.json"),true));
+			System.out.println(obj.toJson(response));
 			jsonWriter.write(obj.toJson(response));
-			jsonWriter.close();
 			
 			}
 			//We don't want to halt the whole program because a URL is invalid.
 			catch(MalformedURLException e) {
-				
-				System.out.println("An invalid URL is contained within the list.");
+				HTTPResponse response = new HTTPResponse(urls,"invalid url");
+				System.out.println(obj.toJson(response));
+				jsonWriter.write(obj.toJson(response));
 				//Will hand control back into the loop
 				continue;
 			}
 		}
+		
+		for(String jsonDocs: jsonStrings) {
+			jsonWriter.write(jsonDocs+"\n");
+		}
+		jsonWriter.close();
 		
 	}
 }
