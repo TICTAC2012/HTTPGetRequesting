@@ -194,24 +194,21 @@ public class HTTPRequesting {
 			Date requestDate = new Date(connection.getDate());
 			DateFormat dateFormatter = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss z");
 			
-			
 			//Output of HTTP response information in JSON
 			HTTPResponse response = new HTTPResponse(connection.getURL().toString(),connection.getResponseCode(),connection.getContentLength(),dateFormatter.format(requestDate));
-			
-			System.out.println(obj.toJson(response));
-			jsonWriter.write(obj.toJson(response));
+			jsonStrings.add(obj.toJson(response));
 			
 			}
 			//We don't want to halt the whole program because a URL is invalid.
 			catch(MalformedURLException e) {
 				HTTPResponse response = new HTTPResponse(urls,"invalid url");
 				System.out.println(obj.toJson(response));
-				jsonWriter.write(obj.toJson(response));
+				jsonStrings.add(obj.toJson(response));
 				//Will hand control back into the loop
 				continue;
 			}
 		}
-		
+		//After all objects have been created, the strings are written to the file.
 		for(String jsonDocs: jsonStrings) {
 			jsonWriter.write(jsonDocs+"\n");
 		}
