@@ -1,4 +1,4 @@
-README - BBC Technical Challenge
+README - Creating and Processing GET Requests to URLs
 Author - Tremaine Crawford
 Language Used - Java
 
@@ -20,4 +20,4 @@ Testing (Not fully implemented) and Running
 		"6" - Tests that the program can timeout a request to a URL if the connection is slow.
 	3.(If Running) When prompted, enter the URLs you wish to use for in the program.
 	
-Extra: The source code for the test methods are available in the "src" folder.
+Extra: The source code for the test methods are available in the "src" folder. To view the source code, use this link - https://github.com/TICTAC2012/HTTPGetRequesting.git
