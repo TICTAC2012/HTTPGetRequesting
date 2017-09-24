@@ -14,9 +14,10 @@ public class MyTests4 {
 			HTTPRequesting.makeGetRequest();
 		}
 		
+		/*
 		//Not necessary for right now? For use with proper command line arguments instead?
 		@Test(expected = IOException.class)
 		public final void whenFailedRequestsAreMade() throws IOException {
 			HTTPRequesting.makeGetRequest();
-		}
+		}*/
 }

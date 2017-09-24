@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -21,6 +22,7 @@ public class HTTPRequesting {
 	
 	//Gives a single input to the program.
 	public static void catchInput() {
+		System.out.println("Enter URL addresses to make a request of");
 		Scanner scanner = new Scanner(System.in);
 		if(scanner.hasNextLine()) {
 			scanner.nextLine();
@@ -30,6 +32,7 @@ public class HTTPRequesting {
 	
 	//Gives input to program and output what was entered.
 	public static void writeOutput() {
+		System.out.println("Enter URL addresses to make a request of");
 		Scanner scanner = new Scanner(System.in);
 		if(scanner.hasNextLine()) {
 			String stringUrl = scanner.nextLine();
@@ -41,6 +44,7 @@ public class HTTPRequesting {
 	//Gives multiple lines of input to the program and adds them to an ArrayList
 	public static void getListOfAddresses() {
 		try {
+			System.out.println("Enter URL addresses to make a request of, leave blank to end input");
 			Scanner scanner = new Scanner(System.in);
 			ArrayList<String> urlAddresses = new ArrayList<String>();
 			String stringUrl = "";
@@ -65,6 +69,7 @@ public class HTTPRequesting {
 	//Takes in a list of potential URLs and attempts to connect to them.
 	public static void makeGetRequest() throws IOException {
 		try {
+			System.out.println("Enter URL addresses to make a request of, leave blank to end input");
 			Scanner scanner = new Scanner(System.in);
 			ArrayList<String> urlAddresses = new ArrayList<String>();
 			String stringUrl = "";
@@ -116,6 +121,7 @@ public class HTTPRequesting {
 	
 	public static void waitForTimeout() throws IOException {
 		try {
+			System.out.println("Enter URL addresses to make a request of, leave blank to end input");
 			Scanner scanner = new Scanner(System.in);
 			ArrayList<String> urlAddresses = new ArrayList<String>();
 			String stringUrl = "";
@@ -155,6 +161,7 @@ public class HTTPRequesting {
 
 	public static void createJson() throws IOException {
 		try {
+		System.out.println("Enter URL addresses to make a request of, leave blank to end input");
 		Scanner scanner = new Scanner(System.in);
 		ArrayList<String> urlAddresses = new ArrayList<String>();
 		String stringUrl = "";
@@ -175,7 +182,7 @@ public class HTTPRequesting {
 	}
 
 	//Helper for the createJson method above
-	public static void generateJson(ArrayList<String> urlAddresses) throws IOException {
+	public static void generateJson(ArrayList<String> urlAddresses) throws IOException, UnknownHostException {
 		//For each URL string, we perform the same connection process.
 		ArrayList<String> jsonStrings = new ArrayList<String>();
 		GsonBuilder gsonBuilder = new GsonBuilder();
@@ -202,7 +209,6 @@ public class HTTPRequesting {
 			//We don't want to halt the whole program because a URL is invalid.
 			catch(MalformedURLException e) {
 				HTTPResponse response = new HTTPResponse(urls,"invalid url");
-				System.out.println(obj.toJson(response));
 				jsonStrings.add(obj.toJson(response));
 				//Will hand control back into the loop
 				continue;

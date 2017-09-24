@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -16,10 +17,43 @@ import java.util.Scanner;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import test.TestRunner;
+
 public class DraftCode {
 
+	//A full run of the program as intended.
 	public static void main(String[]args) throws IOException {
+		System.out.println("Would you like to \"Test\" or \"Run\" the program?");
+		Scanner scanner = new Scanner(System.in);
+		String choice = scanner.next();
+		if(choice.equalsIgnoreCase("test")) {
+			TestRunner tr = new TestRunner();
+			System.out.println("Which test will you run? (Enter a number from 1-6)");
+			Scanner scanner2 = new Scanner(System.in);
+			String testChoice = scanner2.next();
+			scanner2.close();
+			switch (testChoice) {
+            case "1":  tr.RunTest1();
+                     break;
+            case "2":  tr.RunTest2();
+                     break;
+            case "3":  tr.RunTest3();
+                     break;
+            case "4":  tr.RunTest4();
+                     break;
+            case "5":  tr.RunTest5();
+                     break;
+            case "6":  tr.RunTest6();
+                     break;
+			}
+		}else if(choice .equalsIgnoreCase("run")) {
+			createJson();
+		}
+		
+	}
+	public static void createJson() throws IOException {
 		try {
+		System.out.println("Enter URL addresses to make a request of, leave blank to end input");
 		Scanner scanner = new Scanner(System.in);
 		ArrayList<String> urlAddresses = new ArrayList<String>();
 		String stringUrl = "";
@@ -39,7 +73,6 @@ public class DraftCode {
 		}
 	}
 
-	//Helper for the createJson method above
 	public static void generateJson(ArrayList<String> urlAddresses) throws IOException {
 		//For each URL string, we perform the same connection process.
 		ArrayList<String> jsonStrings = new ArrayList<String>();
@@ -71,6 +104,9 @@ public class DraftCode {
 				HTTPResponse response = new HTTPResponse(urls,"invalid url");
 				jsonStrings.add(obj.toJson(response));
 				//Will hand control back into the loop
+				continue;
+			}
+			catch(SocketTimeoutException e) {
 				continue;
 			}
 		}

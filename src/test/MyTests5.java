@@ -1,6 +1,7 @@
 package test;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 
 import org.junit.Test;
 
@@ -12,4 +13,10 @@ public class MyTests5 {
 	public final void whenJsonIsOutput() throws IOException {
 		HTTPRequesting.createJson();
 	}
+	
+	/*
+	@Test(expected = UnknownHostException.class)
+	public final void whenThereIsNoInternetConnection() throws IOException {
+		HTTPRequesting.createJson();
+	}*/
 }
