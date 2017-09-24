@@ -10,7 +10,7 @@ import main.HTTPRequesting;
 public class MyTests6 {
 
 	@Test(expected = SocketTimeoutException.class)
-	public final void whenConnectionTimesout() throws IOException {
+	public final void whenConnectionTimesOut() throws IOException {
 		HTTPRequesting.waitForTimeout();
 		System.out.println("Connection Timed Out");
 	}
